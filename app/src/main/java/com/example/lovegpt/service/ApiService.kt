@@ -8,7 +8,7 @@ import retrofit2.http.POST
 
 interface ApiService {
     @Headers(
-        "Authorization: Bearer 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",
+        "Authorization: Bearer <Your api key>",
         "Content-Type: application/json"
     )
 
