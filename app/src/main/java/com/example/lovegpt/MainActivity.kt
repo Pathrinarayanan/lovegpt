@@ -12,8 +12,10 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
@@ -27,6 +29,11 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
@@ -44,6 +51,7 @@ import com.airbnb.lottie.compose.LottieConstants
 import com.airbnb.lottie.compose.animateLottieCompositionAsState
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.example.lovegpt.ui.theme.LoveGptTheme
+import kotlinx.coroutines.delay
 
 class MainActivity : ComponentActivity() {
     private lateinit var viewmodel: MainViewmodel
@@ -53,7 +61,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             LoveGptTheme {
-                    MainScreen(viewmodel)
+                   AppEntryPoint(viewmodel)
 
             }
         }
@@ -202,3 +210,50 @@ data class MessageType(
     val isFromUser : Boolean
 )
 
+
+@Composable
+fun Splash(){
+    val gradient = Brush
+        .linearGradient(
+            listOf(
+                Color(0xffFFDDF7),
+                Color(0xffC5ECFF),
+                Color(0xffDEE9FF),
+                Color(0xffFFDCF8),
+            )
+        )
+    Box(modifier = Modifier.fillMaxSize().background(gradient), contentAlignment = Alignment.Center){
+        val lottie by  rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.animation_lottie))
+        val progress by animateLottieCompositionAsState(lottie, iterations = LottieConstants.IterateForever)
+
+        Column (modifier = Modifier.fillMaxWidth().wrapContentHeight()){
+            LottieAnimation(
+                composition = lottie,
+                progress = progress,
+                modifier = Modifier.size(500.dp)
+            )
+            Text(
+                "You Love AI Companion",
+                Modifier.padding(start = 10.dp).fillMaxWidth(),
+                fontWeight = FontWeight.W600,
+                color = Color.Red,
+                fontSize = 32.sp
+            )
+        }
+    }
+}
+@Composable
+fun AppEntryPoint(viewModel: MainViewmodel) {
+    var showSplash by remember { mutableStateOf(true) }
+
+    LaunchedEffect(Unit) {
+        delay(3500) // Wait for 2 seconds
+        showSplash = false
+    }
+
+    if (showSplash) {
+        Splash()
+    } else {
+       MainScreen(viewmodel = viewModel)
+    }
+}
